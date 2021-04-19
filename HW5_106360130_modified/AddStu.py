@@ -35,9 +35,6 @@ class AddStu :
             print("    Add {} fail".format(student_info))
 
 
-        
-        
-
     def scores_check(self, name, subject) :
         input_success = False
         while(not(input_success)) :

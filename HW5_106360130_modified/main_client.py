@@ -13,10 +13,10 @@ def main():
     
     while select_result != "exit":
         select_result = print_menu()
-        #try:
-        action_list[select_result](client).execute()
-        #except:
-            #pass
+        try:
+            action_list[select_result](client).execute()
+        except:
+            pass
 
     client.client_socket.close()
     
