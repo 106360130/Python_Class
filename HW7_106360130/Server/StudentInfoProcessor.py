@@ -16,3 +16,6 @@ class StudentInfoProcessor :
 
         with open("student_list.txt", "wb") as fp:
             pickle.dump(student_list, fp)
+
+#stu_list = StudentInfoProcessor().read_student_file()
+#print(stu_list)

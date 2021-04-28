@@ -36,4 +36,16 @@ class StudentInfoTable:
             cursor = connection.cursor()
             cursor.execute(command)
             connection.commit()
+
+
+    def show_all_students(self) :
+        command = "SELECT DISTINCT name FROM student_info;"
+
+        with DBConnection() as connection:
+            cursor = connection.cursor()
+            cursor.execute(command)
+            connection.commit()
+            record_from_db = cursor.fetchall()
+
+        return [row['name'] for row in record_from_db]
        

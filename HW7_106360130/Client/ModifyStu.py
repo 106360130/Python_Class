@@ -33,6 +33,7 @@ class ModifyStu :
             student_info_modified["index"] = stu_raw_data["index"]
             scores[subject_change] = new_score
             student_info_modified["scores_dict"] = scores
+            student_info_modified["stu_id"] = stu_raw_data["stu_id"]
             self.socket_client.send_command("modify", student_info_modified)  #要先"send_command"，注意該輸入的變數
             stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
 

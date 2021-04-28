@@ -23,6 +23,7 @@ class JobDispatcher :
         command = message["command"]
         print("message : {}".format(message))
         parameters = message["parameters"]
+        
         #檢查是否有在dict裡面
         """
         if command in action_list:
@@ -31,6 +32,7 @@ class JobDispatcher :
             print('not exist')
         """
         #檢查是否有在dict裡面
+
         self.send_to_server, self.student_list = action_list[command](self.student_list).execute(parameters)
 
         StudentInfoProcessor().restore_student_file(self.student_list)
