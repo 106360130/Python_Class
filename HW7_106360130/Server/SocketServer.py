@@ -68,19 +68,3 @@ class SocketServer(Thread):
         connection.close()
         print("close connection")
 
-"""
-if __name__ == '__main__':
-    server = SocketServer()
-    server.setDaemon(True)
-    server.serve()
-
-    # because we set daemon is true, so the main thread has to keep alive
-    while True:
-        command = input()
-        if command == "finish":
-            break
-    
-    server.server_socket.close()
-    print("leaving ....... ")
-"""
-
