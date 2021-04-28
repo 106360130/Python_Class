@@ -37,8 +37,4 @@ class AddStu :
             SubjectInfoTable().insert_a_subject(stu_id[-1], subject, scores[subject])  #"stu_id"只取最後一個
 
         
-
-        
-
-
         return  self.send_to_server, self.student_list
