@@ -1,6 +1,6 @@
 from DBConnection import DBConnection
 
-
+#"student_info"的ID會自動編號，可能是下面設定的問題
 necessary_table_to_create = {
     "student_info":
         """

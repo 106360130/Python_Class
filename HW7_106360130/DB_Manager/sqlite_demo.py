@@ -7,6 +7,7 @@ DBConnection.db_file_path = "student_info.db"
 DBInitializer().execute()
 
 #將資料儲存至Database
+StudentInfoTable().insert_a_student("Bill")
 """
 StudentInfoTable().insert_a_student("Bill")
 StudentInfoTable().insert_a_student("John")
