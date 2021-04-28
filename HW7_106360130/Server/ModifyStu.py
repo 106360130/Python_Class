@@ -43,16 +43,16 @@ class ModifyStu :
         #修改student_list資料
 
 
-        print("parameters : {}".format(parameters))
-        print("type(parameters['index']) : {}".format(type(parameters['index'])))
+        #print("parameters : {}".format(parameters))
+        #print("type(parameters['index']) : {}".format(type(parameters['index'])))
         
         for subject in parameters["scores_dict"].keys() :
-            print("stu_id : {}".format(str(parameters["stu_id"][-1])))
-            print("subject : {}".format(subject))
-            print("score_1 : {}".format(parameters["scores_dict"][subject]))
+            #print("stu_id : {}".format(str(parameters["stu_id"][-1])))
+            #print("subject : {}".format(subject))
+            #print("score_1 : {}".format(parameters["scores_dict"][subject]))
             score = SubjectInfoTable().select_a_subject(str(parameters["stu_id"][-1]), subject)
-            print("score_2 : {}".format(score))
-            print("len(score) : {}".format(len(score)))
+            #print("score_2 : {}".format(score))
+            #print("len(score) : {}".format(len(score)))
             if len(score) :  #如果表格裡面有，用update
                 SubjectInfoTable().update_a_subject(str(parameters["stu_id"][-1]), subject, parameters["scores_dict"][subject])
             
