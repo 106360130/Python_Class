@@ -23,7 +23,7 @@ class Query :
 
     def execute(self, parameters) :
         #查看student在名單內是否已經存在
-        
+        """
         search_people = False
 
         for student_info in self.student_list :
@@ -46,12 +46,13 @@ class Query :
             self.send_to_server["status"] = "Fail"
             self.send_to_server["reason"] = "The name is not found."
         #student沒有在名單內
-        
+        """
         #查看student在名單內是否已經存在
 
 
-        """
+        
         stu_id = StudentInfoTable().select_a_student(parameters["name"])
+        print("stu_id : {}".format(stu_id))
         if len(stu_id) :  #如果學生有在table內
             
             #將學生學科分數資料都收集完畢
@@ -65,12 +66,13 @@ class Query :
             #將學生學科分數資料都收集完畢
 
             self.send_to_server["status"] = "OK"
+            self.send_to_server["stu_id"] = stu_id  #現在學生的位置是由"stu_id"去判斷，所以client也要改
             self.send_to_server["scores"] = scores
-            self.send_to_server["stu_id"] = stu_id
+         
         else :
             self.send_to_server["status"] = "Fail"
             self.send_to_server["reason"] = "The name is not found."
-        """
+        
 
 
 

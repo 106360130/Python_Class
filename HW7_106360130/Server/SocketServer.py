@@ -59,6 +59,7 @@ class SocketServer(Thread):
                     #下面參數是丟到"execute"裡面
                     #和"main_client.py"去做比對
                     reply_msg = self.job_dispatcher.execute(message)  #回傳給client端的訊息
+                    print("reply_msg : {}".format(reply_msg))
 
 
 

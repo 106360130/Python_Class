@@ -24,11 +24,12 @@ class DelStu :
     def execute(self, parameters) :
         #print("command : {}".format(command))
 
-        
+        """
         for student_info in self.student_list :
             if student_info["name"] == parameters["name"] :
                 self.student_list.remove(student_info)
                 #print("    Del {} success".format(name))
+        """
         
 
     

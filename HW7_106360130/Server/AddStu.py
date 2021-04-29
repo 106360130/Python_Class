@@ -25,7 +25,7 @@ class AddStu :
         #print("command : {}".format(command))
         self.send_to_server = {}
         self.send_to_server["status"] = "OK"
-        self.student_list.append(parameters)
+        ##self.student_list.append(parameters)
         #print("parameters : {}".format(parameters))
         #print(parameters["name"])
         #print(type(parameters["name"]))
