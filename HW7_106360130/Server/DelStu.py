@@ -21,24 +21,8 @@ class DelStu :
         self.send_to_server = {}
 
     def execute(self, parameters) :
-        #print("command : {}".format(command))
-
-        """
-        for student_info in self.student_list :
-            if student_info["name"] == parameters["name"] :
-                self.student_list.remove(student_info)
-                #print("    Del {} success".format(name))
-        """
-        
-
-    
-        #print("parameters : {}".format(parameters))
-        #print("parameters['name'] : {}".format(parameters["name"]))
 
         stu_id = StudentInfoTable().select_a_student(parameters["name"])
-        #print("stu_id : {}".format(stu_id))
-        #print("type(stu_id) : {}".format(type(stu_id)))  #"stu_id"回傳是"list"型別
-        #print("type(stu_id) : {}".format(stu_id[-1]))
 
         #刪除學生資料
         StudentInfoTable().delete_a_student(str(stu_id[-1]))  #參數規定要用"str"型別 

@@ -21,23 +21,20 @@ class StudentDataProcessor :
         self.student_list = list()
         
         stu_list = StudentInfoTable().show_all_students()
-        #print("stu_list : {}".format(stu_list))
-        #print("type(stu_list) : {}".format(type(stu_list)))
 
         stu_list_2 = []  #從database中取出的stu_list
         for name in stu_list :
             stu_dict = {}
             stu_dict["name"] = name
-            #print("name : {}".format(name))
+            
             stu_id = StudentInfoTable().select_a_student(name)
-            #print("stu_id[-1] : {}".format(stu_id[-1]))
             sub_list = SubjectInfoTable().show_all_subjects(str(stu_id[-1]))
-            #print("sub_list : {}".format(sub_list))
+            
             scores = {}
             for subject in sub_list :
                 score = SubjectInfoTable().select_a_subject(stu_id[-1], subject)
                 scores[subject] = float(score[-1])
-            #print("scores : {}".format(scores))
+            
             stu_dict["scores"] = scores
             stu_list_2.append(stu_dict)
 
@@ -48,4 +45,4 @@ class StudentDataProcessor :
         return stu_list_2
 
 
-#student_list = StudentDataProcessor().read_student_data()
+
