@@ -17,8 +17,7 @@ DBConnection.db_file_path = "student_info.db"
 DBInitializer().execute()
 
 class Query :
-    def __init__(self, student_list):
-        self.student_list = student_list
+    def __init__(self):
         self.send_to_server = {}
 
     def execute(self, parameters) :
@@ -76,4 +75,4 @@ class Query :
 
 
 
-        return  self.send_to_server, self.student_list
+        return  self.send_to_server

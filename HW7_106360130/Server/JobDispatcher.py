@@ -33,6 +33,6 @@ class JobDispatcher :
         """
         #檢查是否有在dict裡面
 
-        self.send_to_server, self.student_list = action_list[command](self.student_list).execute(parameters)
+        self.send_to_server = action_list[command]().execute(parameters)
 
         return self.send_to_server  #最後要將訊息傳回server
