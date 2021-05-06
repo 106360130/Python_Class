@@ -91,6 +91,7 @@ class AddStuWidget(QtWidgets.QWidget):
         self.edit_name_label.clear()
         self.button_query.setEnabled(True)
         self.query_name = False
+        self.button_add.setEnabled(False)
         
     def press_subject_label_action(self, event):
         self.edit_subject_label.clear()
@@ -107,24 +108,41 @@ class AddStuWidget(QtWidgets.QWidget):
 
 
     def confirm_query(self) :
-        self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
-        self.button_query.setEnabled(False)
-        self.edit_subject_label.clear()
+
+        if(self.edit_name_label.text() == "") :  #"name"如果是空字串就要再輸入一次
+            self.hint_label.setText("Please enter name for student.")
+
+        else :
+            self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
+            self.button_query.setEnabled(False)
+            self.stu_list["name"] = self.edit_name_label.text()
+            self.query_name = True
+            if(self.edit_subject_label.text() != "" and self.edit_score_label.text() != "") :
+                self.button_add.setEnabled(True)
+
         
-        self.stu_list["name"] = self.edit_name_label.text()
-        self.query_name = True
-        self.push_query = True
+        
+        
         #self.edit_subject_label.setCursorPosition(0)
 
     def confirm_add(self) :
         #print(type(self.edit_subject_label.text()))
         #print(type(self.edit_score_label.text()))
-        self.stu_list["scores"][self.edit_subject_label.text()] = self.edit_score_label.text()
-        print(self.stu_list)
-        self.hint_label.setText("Student {}'s subject '{}' with score '{}' added"
-        .format(self.edit_name_label.text(), self.edit_subject_label.text(), self.edit_score_label.text()))
+        if(self.query_name == False) :  #先確認有沒有"query_name"
+            self.hint_label.setText("Please query a new name first")
 
-        self.input_subject = True
+        elif(self.edit_subject_label.text() == "") :  #要先輸入"subject"
+            self.hint_label.setText("Please input student's subject first.")
+
+        elif(self.edit_score_label.text() == "") :  #再輸入"score"
+            self.hint_label.setText("Please enter student's {} grade.".format(self.edit_subject_label.text()))
+
+        else :
+            self.stu_list["scores"][self.edit_subject_label.text()] = self.edit_score_label.text()
+            print(self.stu_list)
+            self.hint_label.setText("Student {}'s subject '{}' with score '{}' added"
+            .format(self.edit_name_label.text(), self.edit_subject_label.text(), self.edit_score_label.text()))
+            self.input_subject = True
         
 
     def confirm_send(self):
