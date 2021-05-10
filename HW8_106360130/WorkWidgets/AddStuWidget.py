@@ -121,8 +121,6 @@ class AddStuWidget(QtWidgets.QWidget):
                 self.button_add.setEnabled(True)
 
         
-        
-        
         #self.edit_subject_label.setCursorPosition(0)
 
     def confirm_add(self) :
