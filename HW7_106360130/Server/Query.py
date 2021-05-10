@@ -17,34 +17,33 @@ DBConnection.db_file_path = "student_info.db"
 DBInitializer().execute()
 
 class Query :
-    def __init__(self, student_list):
-        self.student_list = student_list
+    def __init__(self):
         self.send_to_server = {}
 
     def execute(self, parameters) :
-        #查看student在名單內是否已經存在
-        search_people = False
-        for student_info in self.student_list :
 
-            #student在名單內
-            if student_info["name"] == parameters["name"] :
-                position = self.student_list.index(student_info)
-                self.send_to_server["status"] = "OK"
-                self.send_to_server["index"] = position
-                self.send_to_server["scores"] = student_info["scores"]
-                search_people = True
+        stu_id = StudentInfoTable().select_a_student(parameters["name"])
+        print("stu_id : {}".format(stu_id))
+        if len(stu_id) :  #查看學生是否有在table內，如果學生有在table內
+            
+            #將學生學科分數資料都收集完畢
+            sub_list = SubjectInfoTable().show_all_subjects(str(stu_id[-1]))
+            
+            scores = {}
+            for subject in sub_list :
+                score = SubjectInfoTable().select_a_subject(stu_id[-1], subject)
+                scores[subject] = float(score[-1])
+            #將學生學科分數資料都收集完畢
 
-                stu_id = StudentInfoTable().select_a_student(parameters["name"])
-                self.send_to_server["stu_id"] = stu_id
-                break
-            #student在名單內
-
-        
-        #student沒有在名單內
-        if not search_people :
+            self.send_to_server["status"] = "OK"
+            self.send_to_server["stu_id"] = stu_id  #現在學生的位置是由"stu_id"去判斷，所以client也要改
+            self.send_to_server["scores"] = scores
+         
+        else :
             self.send_to_server["status"] = "Fail"
             self.send_to_server["reason"] = "The name is not found."
-        #student沒有在名單內
+        
 
-        #查看student在名單內是否已經存在
-        return  self.send_to_server, self.student_list
+
+
+        return  self.send_to_server

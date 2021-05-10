@@ -30,7 +30,8 @@ class ModifyStu :
             new_score, search_fail = self.score_check(name, scores, subject_change)
 
             student_info_modified = {}
-            student_info_modified["index"] = stu_raw_data["index"]
+            ##student_info_modified["index"] = stu_raw_data["index"]
+            student_info_modified["stu_id"] = stu_raw_data["stu_id"]
             scores[subject_change] = new_score
             student_info_modified["scores_dict"] = scores
             student_info_modified["stu_id"] = stu_raw_data["stu_id"]

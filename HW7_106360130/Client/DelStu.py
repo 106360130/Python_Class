@@ -19,7 +19,8 @@ class DelStu :
             while input_wrong :  #輸入不符合輸入的格式就繼續輸入
                 confirm_answer = input("    Confirm to delete (y/n):")
                 if confirm_answer.upper() == "Y" :  #都先轉成大寫去比較
-                    student_info["index"] = stu_raw_data["index"]
+                    #student_info["index"] = stu_raw_data["index"]
+                    student_info["stu_id"] = stu_raw_data["stu_id"]  #因為現在學生是用"stu_id"去判斷，所以要送回去"stu_id"表示有接收到
                     self.socket_client.send_command("delete", student_info)  #要先"send_command"，注意該輸入的變數
                     stu_raw_data = self.socket_client.wait_response()
                     if stu_raw_data["status"] == "OK" :

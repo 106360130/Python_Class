@@ -1,4 +1,4 @@
-from StudentInfoProcessor import StudentInfoProcessor
+from StudentDataProcessor import StudentDataProcessor
 from PrintAll import PrintAll
 from Query import Query
 from AddStu import AddStu
@@ -16,7 +16,7 @@ action_list = {
 
 class JobDispatcher :
     def __init__(self) :
-        self.student_list = StudentInfoProcessor().read_student_file()
+        self.student_list = StudentDataProcessor().read_student_data()  #用SQLite存資料
         self.send_to_server = {}
 
     def execute(self, message) :
@@ -33,7 +33,6 @@ class JobDispatcher :
         """
         #檢查是否有在dict裡面
 
-        self.send_to_server, self.student_list = action_list[command](self.student_list).execute(parameters)
+        self.send_to_server = action_list[command]().execute(parameters)
 
-        StudentInfoProcessor().restore_student_file(self.student_list)
         return self.send_to_server  #最後要將訊息傳回server

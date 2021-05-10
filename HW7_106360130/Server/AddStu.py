@@ -17,28 +17,20 @@ DBConnection.db_file_path = "student_info.db"
 DBInitializer().execute()
 
 class AddStu :
-    def __init__(self, student_list):
-        self.student_list = student_list
+    def __init__(self):
         self.send_to_server = {}
 
     def execute(self, parameters) :
-        #print("command : {}".format(command))
+ 
         self.send_to_server = {}
         self.send_to_server["status"] = "OK"
-        self.student_list.append(parameters)
-        #print("parameters : {}".format(parameters))
-        #print(parameters["name"])
-        #print(type(parameters["name"]))
+
         StudentInfoTable().insert_a_student(parameters["name"])
         stu_id = StudentInfoTable().select_a_student(parameters["name"])
-        #print("type(stu_id) : {}".format(type(stu_id)))
+
         scores = parameters["scores"]
         for subject in scores.keys() :
             SubjectInfoTable().insert_a_subject(stu_id[-1], subject, scores[subject])  #"stu_id"只取最後一個
 
         
-
-        
-
-
-        return  self.send_to_server, self.student_list
+        return  self.send_to_server

@@ -59,6 +59,7 @@ class SocketServer(Thread):
                     #下面參數是丟到"execute"裡面
                     #和"main_client.py"去做比對
                     reply_msg = self.job_dispatcher.execute(message)  #回傳給client端的訊息
+                    #print("reply_msg : {}".format(reply_msg))
 
 
 
@@ -67,20 +68,4 @@ class SocketServer(Thread):
         
         connection.close()
         print("close connection")
-
-"""
-if __name__ == '__main__':
-    server = SocketServer()
-    server.setDaemon(True)
-    server.serve()
-
-    # because we set daemon is true, so the main thread has to keep alive
-    while True:
-        command = input()
-        if command == "finish":
-            break
-    
-    server.server_socket.close()
-    print("leaving ....... ")
-"""
 
