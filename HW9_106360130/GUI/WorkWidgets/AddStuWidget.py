@@ -1,19 +1,13 @@
-#要呼叫"Client"資料夾的function
-import os
-Client_path = os.path.abspath(os.path.join(os.getcwd(), "."))  #查看上級路徑
-Client_path = os.path.join(Client_path, "Client")  #合併路徑
-import sys
-sys.path.append(Client_path)  #增加路徑
-print("Client_path : {}".format(Client_path))
-print("sys.path : {}".format(sys.path))
-#要呼叫"Client"資料夾的function
-
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgetComponents import LabelComponent, LineEditComponent, ButtonComponent, HintLabelComponent
-from SocketClient import SocketClient
+
+#背景執行續
+from PyQt5.QtCore import pyqtSignal
+import json
+#背景執行續
 
 class AddStuWidget(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, socket_client):
         super().__init__()
         self.setObjectName("add_stu_widget")
         #"stu_list"初始化
@@ -21,8 +15,8 @@ class AddStuWidget(QtWidgets.QWidget):
         self.stu_list["name"] = {}
         self.stu_list["scores"] = {}
         #"stu_list"初始化
-        self.socket_client = SocketClient
 
+        self.socket_client = socket_client
 
         self.query_name = False  #紀錄是否有輸入"name"且"query"過了
         self.input_subject = False  #紀錄是否有增加過"subject"和"score"了
@@ -130,6 +124,7 @@ class AddStuWidget(QtWidgets.QWidget):
             self.query_name = True
             if(self.edit_subject_label.text() != "" and self.edit_score_label.text() != "") :
                 self.button_add.setEnabled(True)
+
             self.socket_client.send_command("query", self.stu_list)  #先"send_command"
             stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
         
@@ -158,13 +153,48 @@ class AddStuWidget(QtWidgets.QWidget):
     def confirm_send(self):
         if self.query_name and self.input_subject :
             self.hint_label.setText(str(self.stu_list))
-            self.stu_list = {}
             self.input_name = False
             self.input_subject = False
             self.edit_name_label.setText("Name")
             self.edit_subject_label.setText("Subject")
             self.edit_score_label.clear()
-            
 
+            print(self.stu_list)
+            self.send_command = ExecuteConfirmCommand(self.socket_client, self.stu_list)
+            self.send_command.start()
+
+            self.stu_list = {}  #"self.stu_list"給reset掉
+            #self.send_command.return_sig.connect(self.process_result)
+            
         else :
             self.hint_label.setText("Please input correct information.")
+
+        def process_result(self, result):
+            result = json.loads(result)
+            self.message_label.setText("count: {}".format(result['message']))
+
+class ExecuteConfirmCommand(QtCore.QThread):
+    return_sig = pyqtSignal(str)
+
+    def __init__(self, socket_client, stu_list):
+        super().__init__()
+        self.stu_list = stu_list
+        self.socket_client = socket_client
+
+    def run(self):
+        self.socket_client.send_command("add", self.stu_list)
+        stu_raw_data = self.socket_client.wait_response()
+        # print("stu_raw_data : {}".format(stu_raw_data))
+        if stu_raw_data["status"] == "OK" :
+            print("    Add {} success".format(self.stu_list))
+
+        else :
+            print("    Add {} fail".format(self.stu_list))
+            
+        """
+        result_dict = dict()
+        for i in range(self.counts):
+            result_dict['message'] = i
+            self.return_sig.emit(json.dumps(result_dict))
+            #time.sleep(1)
+        """
