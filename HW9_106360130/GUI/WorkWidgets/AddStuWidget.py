@@ -118,7 +118,7 @@ class AddStuWidget(QtWidgets.QWidget):
             self.hint_label.setText("Please enter name for student.")
 
         else :
-            self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
+            
             self.button_query.setEnabled(False)
             self.stu_list["name"] = self.edit_name_label.text()
             self.query_name = True
@@ -127,6 +127,16 @@ class AddStuWidget(QtWidgets.QWidget):
 
             self.socket_client.send_command("query", self.stu_list)  #先"send_command"
             stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
+            #print("stu_raw_data : {}".format(stu_raw_data))
+
+            if stu_raw_data["status"] == "OK" :
+                self.hint_label.setText("The student '{}' already exists in DB".format(self.edit_name_label.text()))
+                self.query_name = False
+
+            else :
+                self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
+
+            
         
         #self.edit_subject_label.setCursorPosition(0)
 
@@ -144,7 +154,7 @@ class AddStuWidget(QtWidgets.QWidget):
 
         else :
             self.stu_list["scores"][self.edit_subject_label.text()] = self.edit_score_label.text()
-            print(self.stu_list)
+            #print(self.stu_list)
             self.hint_label.setText("Student {}'s subject '{}' with score '{}' added"
             .format(self.edit_name_label.text(), self.edit_subject_label.text(), self.edit_score_label.text()))
             self.input_subject = True
@@ -159,22 +169,17 @@ class AddStuWidget(QtWidgets.QWidget):
             self.edit_subject_label.setText("Subject")
             self.edit_score_label.clear()
 
-            print(self.stu_list)
+            #print(self.stu_list)
             self.send_command = ExecuteConfirmCommand(self.socket_client, self.stu_list)
             self.send_command.start()
 
+            self.hint_label.setText("Add {} successfully".format(self.stu_list))
             self.stu_list = {}  #"self.stu_list"給reset掉
-            #self.send_command.return_sig.connect(self.process_result)
             
         else :
             self.hint_label.setText("Please input correct information.")
 
-        def process_result(self, result):
-            result = json.loads(result)
-            self.message_label.setText("count: {}".format(result['message']))
-
 class ExecuteConfirmCommand(QtCore.QThread):
-    return_sig = pyqtSignal(str)
 
     def __init__(self, socket_client, stu_list):
         super().__init__()
@@ -185,16 +190,11 @@ class ExecuteConfirmCommand(QtCore.QThread):
         self.socket_client.send_command("add", self.stu_list)
         stu_raw_data = self.socket_client.wait_response()
         # print("stu_raw_data : {}".format(stu_raw_data))
+        """
         if stu_raw_data["status"] == "OK" :
             print("    Add {} success".format(self.stu_list))
 
         else :
             print("    Add {} fail".format(self.stu_list))
+        """
             
-        """
-        result_dict = dict()
-        for i in range(self.counts):
-            result_dict['message'] = i
-            self.return_sig.emit(json.dumps(result_dict))
-            #time.sleep(1)
-        """
