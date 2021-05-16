@@ -35,15 +35,25 @@ class ModifyStu :
             scores[subject_change] = new_score
             student_info_modified["scores_dict"] = scores
             student_info_modified["stu_id"] = stu_raw_data["stu_id"]
-            self.socket_client.send_command("modify", student_info_modified)  #要先"send_command"，注意該輸入的變數
-            stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
+
+            #adding new subject, if "new_score" > 0
+            if new_score >= 0 :
+                self.socket_client.send_command("modify", student_info_modified)  #要先"send_command"，注意該輸入的變數
+                stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
+            else :
+                stu_raw_data = {}  #reseting "stu_raw_data"
+            #adding new subject, if "new_score" > 0
 
             if stu_raw_data["status"] == "OK" :
+                print("OK")
+                
                 if search_fail :
                     print("    Add {} success".format([name, subject_change, new_score]))
 
                 else :
                     print("    Modify {} success".format([name, subject_change, new_score]))
+            else :
+                print("False")
     
     def score_check(self, name, scores, subject_change) :
         search_fail = True
