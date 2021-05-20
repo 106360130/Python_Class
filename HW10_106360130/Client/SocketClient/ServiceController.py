@@ -7,7 +7,7 @@ class ServeiceController :
 
     def command_sender(self, command, data):
         self.socket_client.send_command(command, data)
-        result = self.socket_client.wait_responce()
+        result = self.socket_client.wait_response()
 
         return result
 
@@ -20,7 +20,7 @@ class ExcuteCommand(QtCore.QThread):
         self.data = data
 
     def run(self):
-        result = ServeiceController.command_sender(self.command, self.data)
+        result = ServeiceController().command_sender(self.command, self.data)
         #"json.dumps" : 將Python對象編碼成JSON字符串
         #"emit" : 發射訊號
         self.return_sig.emit(json.dumps(result))

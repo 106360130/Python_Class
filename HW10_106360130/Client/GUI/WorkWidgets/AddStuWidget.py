@@ -5,6 +5,7 @@ import json
 
 
 #要呼叫"SocketClient"資料夾的function
+"""
 import os
 Client_path = os.path.abspath(os.path.join(os.getcwd(), ".."))  #查看上級路徑
 Client_path = os.path.join(Client_path, "SocketClient")  #合併路徑
@@ -12,6 +13,7 @@ import sys
 sys.path.append(Client_path)  #增加路徑
 # print("Client_path : {}".format(Client_path))
 # print("sys.path : {}".format(sys.path))
+"""
 #要呼叫"SocketClient"資料夾的function
 
 from SocketClient.ServiceController import ExcuteCommand
@@ -100,6 +102,9 @@ class AddStuWidget(QtWidgets.QWidget):
         #設定各別row所占的比例
 
         self.setLayout(layout)
+    
+    def load(self):
+        print("add widget")
 
     def press_name_label_action(self, event):
         self.edit_name_label.clear()
@@ -130,9 +135,12 @@ class AddStuWidget(QtWidgets.QWidget):
             
             self.button_query.setEnabled(False)
             self.stu_list["name"] = self.edit_name_label.text()
+            self.stu_list["scores"] = {}
+            print("self.stu_list : {}".format(self.stu_list))
             self.query_name = True
             if(self.edit_subject_label.text() != "" and self.edit_score_label.text() != "") :
                 self.button_add.setEnabled(True)
+            
             
             self.execute_query = ExcuteCommand(command = "query", data = self.stu_list)
             self.execute_query.start()
@@ -151,7 +159,6 @@ class AddStuWidget(QtWidgets.QWidget):
         else :
             self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
         
-        #self.edit_subject_label.setCursorPosition(0)
 
     def confirm_add(self) :
         #print(type(self.edit_subject_label.text()))
@@ -166,8 +173,9 @@ class AddStuWidget(QtWidgets.QWidget):
             self.hint_label.setText("Please enter student's {} grade.".format(self.edit_subject_label.text()))
 
         else :
+            print(self.stu_list)
             self.stu_list["scores"][self.edit_subject_label.text()] = self.edit_score_label.text()
-            #print(self.stu_list)
+            
             self.hint_label.setText("Student {}'s subject '{}' with score '{}' added"
             .format(self.edit_name_label.text(), self.edit_subject_label.text(), self.edit_score_label.text()))
             self.input_subject = True
@@ -181,33 +189,29 @@ class AddStuWidget(QtWidgets.QWidget):
             self.edit_name_label.setText("Name")
             self.edit_subject_label.setText("Subject")
             self.edit_score_label.clear()
+            self.button_add.setEnabled(False)
+
 
             #print(self.stu_list)
-            self.send_command = ExecuteConfirmCommand(self.socket_client, self.stu_list)
-            self.send_command.start()
-
-            self.hint_label.setText("Add {} successfully".format(self.stu_list))
-            self.stu_list = {}  #"self.stu_list"給reset掉
+            self.execute_send = ExcuteCommand(command = "add", data = self.stu_list)
+            self.execute_send.start()
+            self.execute_send.return_sig.connect(self.send_action_result)  #將信號連接到指定槽函數
             
         else :
             self.hint_label.setText("Please input correct information.")
 
-class ExecuteConfirmCommand(QtCore.QThread):
+    def send_action_result(self, result):
+        #"json.loads" : 將已編碼的JSON解碼為Python對象
+        result = json.loads(result)
 
-    def __init__(self, socket_client, stu_list):
-        super().__init__()
-        self.stu_list = stu_list
-        self.socket_client = socket_client
-
-    def run(self):
-        self.socket_client.send_command("add", self.stu_list)
-        stu_raw_data = self.socket_client.wait_response()
-        # print("stu_raw_data : {}".format(stu_raw_data))
-        """
-        if stu_raw_data["status"] == "OK" :
-            print("    Add {} success".format(self.stu_list))
+        if result["status"] == "OK" :
+            self.hint_label.setText("Add {} successfully".format(self.stu_list))
+            self.stu_list = {}  #"self.stu_list"給reset掉
+            print("self.stu_list : {}".format(self.stu_list))
 
         else :
-            print("    Add {} fail".format(self.stu_list))
-        """
+            self.hint_label.setText("Add {} unsuccessfully".format(self.stu_list))
+        
+
+            
             
