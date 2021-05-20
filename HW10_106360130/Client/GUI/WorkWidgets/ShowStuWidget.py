@@ -23,40 +23,43 @@ class ShowStuWidget(QtWidgets.QWidget):
         self.button_refresh.setEnabled(True)
         #"button_query"的設定
         
-
+        #layout增加widget
         layout.addWidget(header_label, stretch=1)
-        layout.addWidget(self.button_refresh, stretch=0.5)
+        layout.addWidget(self.button_refresh, stretch=1)
+        #layout增加widget
         
 
-        self.topFiller = QWidget()
-        self.topFiller.setMinimumSize(500, 2000)
-        self.scroll = QScrollArea()
-        self.scroll.setWidget(self.topFiller)
-        
+        self.stu_screen = QWidget()  #新增widget
+        self.stu_screen.setMinimumSize(400, 2000)  #設定最小size
+        self.scroll_area = QScrollArea()  #新增scoll area
+        self.scroll_area.setWidget(self.stu_screen)  #增加到widget裡 
+
+        for i in range(5, 10) :
+            self.label_test = QtWidgets.QLabel(self.stu_screen)
+            self.label_test.setText("      ==== student list ====      ")
+            self.label_test.setFont(QtGui.QFont("微軟正黑體", 15, QtGui.QFont.Bold))
+            self.label_test.move(0, i*40)
 
 
-        self.hint_label = QtWidgets.QLabel(self.topFiller)
-        self.hint_label.setText("== student list ==")
+        self.hint_label = QtWidgets.QLabel(self.stu_screen)
+        self.hint_label.setText("      ==== student list ====      ")
         self.hint_label.setFont(QtGui.QFont("微軟正黑體", 15, QtGui.QFont.Bold))
 
-        self.label_name = QtWidgets.QLabel(self.topFiller)
+
+        self.label_name = QtWidgets.QLabel(self.stu_screen)
         self.label_name.setText("                                         ")
         self.label_name.setFont(QtGui.QFont("微軟正黑體", 15, QtGui.QFont.Bold))
         self.label_name.move(0, 40)
 
 
-        self.label_subject = QtWidgets.QLabel(self.topFiller)
+        self.label_subject = QtWidgets.QLabel(self.stu_screen)
         self.label_subject.setText("                                                                 ")
         self.label_subject.setFont(QtGui.QFont("微軟正黑體", 15, QtGui.QFont.Bold))
         self.label_subject.move(0, 80)
         
-       
+    
+        layout.addWidget(self.scroll_area)
         
-        
-        
-        
-
-        layout.addWidget(self.scroll)
 
         self.setLayout(layout)
 
@@ -74,14 +77,13 @@ class ShowStuWidget(QtWidgets.QWidget):
         #self.hint_label.setText("Add {} successfully".format(self.stu_list))
         #print("self.stu_list : {}".format(student_list))
         
-    
 
-        """
-        self.label_3 = QtWidgets.QLabel(self.topFiller)
+        
+        self.label_3 = QtWidgets.QLabel(self.stu_screen)
         self.label_3.setText("87")
-        self.label_3.setFont(QtGui.QFont("微軟正黑體", 20, QtGui.QFont.Bold))
+        self.label_3.setFont(QtGui.QFont("微軟正黑體", 40, QtGui.QFont.Bold))
         self.label_3.move(0, 80)
-        """
+        
 
         print ("\n==== student list ====")
         i = 1
@@ -89,6 +91,13 @@ class ShowStuWidget(QtWidgets.QWidget):
             #print("student_info : \n{}".format(student_info))
             self.label_name.setText("Name : {}".format((student_info["name"])))
             print("\nName : {}".format(student_info["name"]))
+
+            self.label_test = QtWidgets.QLabel(self.stu_screen)
+            self.label_test.setText(" 123                                        ")
+            self.label_test.setFont(QtGui.QFont("微軟正黑體", 15, QtGui.QFont.Bold))
+            self.label_test.move(0, 40*i)
+            i = i+1 
+
 
             for subject in student_info["scores"] :
 
@@ -101,10 +110,5 @@ class ShowStuWidget(QtWidgets.QWidget):
         print ("\n======================")
 
         
-
-
-
-
-    
     def load(self):
         print("show widget")
