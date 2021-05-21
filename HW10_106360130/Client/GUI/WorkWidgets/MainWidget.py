@@ -35,8 +35,10 @@ class MenuWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         add_button = ButtonComponent("Add student")
         add_button.setEnabled(True)
+
         show_button = ButtonComponent("Show all")
         show_button.setEnabled(True)
+
         add_button.clicked.connect(lambda: self.update_widget_callback("add"))
         show_button.clicked.connect(lambda: self.update_widget_callback("show"))
 
