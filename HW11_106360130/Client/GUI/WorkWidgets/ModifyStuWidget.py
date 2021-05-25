@@ -1,8 +1,10 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-from GUI.WorkWidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
+from GUI.WorkWidgetComponents import LabelComponent, LineEditComponent, ButtonComponent, HintLabelComponent
 
 import time
 
+from SocketClient.ServiceController import ExcuteCommand
+import json
 
 class ModifyStuWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -26,8 +28,13 @@ class ModifyWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("modify_stu_widget")
+        self.stu_list = {}
+        self.stu_list["name"] = {}
+        self.stu_list["scores"] = {}
 
         layout = QtWidgets.QVBoxLayout()
+
+        self.label_hint = HintLabelComponent(15, "Test Test Test Test")
 
         #Name
         layout_name = QtWidgets.QGridLayout()
@@ -35,9 +42,13 @@ class ModifyWidget(QtWidgets.QWidget):
         self.screen_name.setLayout(layout_name)
 
         label_name = LabelComponent(16, "Name: ")
-        self.edit_label_name = LineEditComponent("Name")
-        self.button_query = ButtonComponent("Query")
 
+        self.edit_label_name = LineEditComponent("Name")
+        self.edit_label_name.mousePressEvent = self.press_name_label_action
+
+        self.button_query = ButtonComponent("Query")
+        self.button_query.clicked.connect(self.confirm_query)
+        
         layout_name.addWidget(label_name, 0, 0, 1, 1)
         layout_name.addWidget(self.edit_label_name, 0, 1, 1, 1)
         layout_name.addWidget(self.button_query, 0, 2, 1, 1)
@@ -145,11 +156,8 @@ class ModifyWidget(QtWidgets.QWidget):
         self.radio_button_add.toggled.connect(self.radio_button_on_clicked)
 
 
-        """
-        layout.addWidget(self.radio_button_change)
-        layout.addWidget(self.radio_button_add)
-        layout.addWidget(self.combo_box_score)
-        """
+
+        layout.addWidget(self.label_hint, stretch=1)
         layout.addWidget(self.screen_name, stretch=1)
         layout.addWidget(self.screen_change, stretch=1)
         layout.addWidget(self.screen_add, stretch=1)
@@ -166,4 +174,42 @@ class ModifyWidget(QtWidgets.QWidget):
 
     def combo_box_select_changed(self, index):
         print ("Index {} {} selected".format(index, self.combo_box_score.currentText()))
+
+
+
+    def press_name_label_action(self, event):
+        self.edit_label_name.clear()
+        self.button_query.setEnabled(True)
+        self.query_name = False
+
+    def confirm_query(self) :
+
+        if(self.edit_label_name.text() == "") :  #"name"如果是空字串就要再輸入一次
+            self.label_hint.setText("Please enter name for student.")
+
+        else :
+            
+            self.button_query.setEnabled(False)
+            self.stu_list["name"] = self.edit_label_name.text()
+            self.stu_list["scores"] = {}
+            print("self.stu_list : {}".format(self.stu_list))
+            self.query_name = True
+            
+            self.execute_query = ExcuteCommand(command = "query", data = self.stu_list)
+            self.execute_query.start()
+            self.execute_query.return_sig.connect(self.query_action_result)  #將信號連接到指定槽函數
+            # self.socket_client.send_command("query", self.stu_list)  #先"send_command"
+            # stu_raw_data = self.socket_client.wait_response()  #才會有"wait_response"
+
+    def query_action_result(self, result):
+        #"json.loads" : 將已編碼的JSON解碼為Python對象
+        result = json.loads(result)
+
+        if result["status"] == "OK" :
+            self.label_hint.setText("The student '{}' already exists in DB".format(self.edit_label_name.text()))
+            self.query_name = False
+
+        else :
+            self.label_hint.setText("Please enter subjects for student '{}'".format(self.edit_label_name.text()))
+        
 
