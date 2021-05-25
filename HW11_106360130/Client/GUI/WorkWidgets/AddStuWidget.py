@@ -39,17 +39,17 @@ class AddStuWidget(QtWidgets.QWidget):
         name_label = LabelComponent(16, "Name: ")
         subject_label = LabelComponent(16, "Subject: ")
         score_label = LabelComponent(16, "Score: ")
-        self.hint_label = HintLabelComponent(15, "")
+        self.label_hint = HintLabelComponent(15, "")
 
-        self.edit_name_label = LineEditComponent("Name")
-        self.edit_name_label.mousePressEvent = self.press_name_label_action
+        self.edit_label_name = LineEditComponent("Name")
+        self.edit_label_name.mousePressEvent = self.press_name_label_action
         
-        self.edit_subject_label = LineEditComponent("Subject")
-        self.edit_subject_label.mousePressEvent = self.press_subject_label_action
+        self.edit_label_subject = LineEditComponent("Subject")
+        self.edit_label_subject.mousePressEvent = self.press_subject_label_action
 
-        self.edit_score_label = LineEditComponent()
-        self.edit_score_label.mousePressEvent = self.press_score_label_action
-        self.edit_score_label.setValidator(QtGui.QIntValidator(1, 100))  #限制只能輸入"int"，且範圍在"三位數內"
+        self.edit_label_score = LineEditComponent()
+        self.edit_label_score.mousePressEvent = self.press_score_label_action
+        self.edit_label_score.setValidator(QtGui.QIntValidator(1, 100))  #限制只能輸入"int"，且範圍在"三位數內"
 
         #"button_query"的設定
         self.button_query = ButtonComponent("Query")
@@ -75,10 +75,10 @@ class AddStuWidget(QtWidgets.QWidget):
         layout.addWidget(name_label, 1, 0, 1, 1)
         layout.addWidget(subject_label, 2, 0, 1, 1)
         layout.addWidget(score_label, 3, 0, 1, 1)
-        layout.addWidget(self.hint_label, 0, 3, 4, 2)
-        layout.addWidget(self.edit_name_label, 1, 1, 1, 1)
-        layout.addWidget(self.edit_subject_label, 2, 1, 1, 1)
-        layout.addWidget(self.edit_score_label, 3, 1, 1, 1)
+        layout.addWidget(self.label_hint, 0, 3, 4, 2)
+        layout.addWidget(self.edit_label_name, 1, 1, 1, 1)
+        layout.addWidget(self.edit_label_subject, 2, 1, 1, 1)
+        layout.addWidget(self.edit_label_score, 3, 1, 1, 1)
         layout.addWidget(self.button_query, 1, 2, 1, 1)
         layout.addWidget(self.button_add, 3, 2, 1, 1)
         layout.addWidget(self.button_send, 6, 3, 1, 1)
@@ -105,40 +105,50 @@ class AddStuWidget(QtWidgets.QWidget):
     
     def load(self):
         print("add widget")
+        self.init_action()
+
+    def init_action(self):
+        self.label_hint.setText("")
+        self.edit_label_name.setText("Name")
+        self.edit_label_subject.setText("Subject")
+        self.edit_label_score.clear()
+        self.button_query.setEnabled(False)
+        self.button_add.setEnabled(False)
+        self.button_send.setEnabled(False)
 
     def press_name_label_action(self, event):
-        self.edit_name_label.clear()
+        self.edit_label_name.clear()
         self.button_query.setEnabled(True)
         self.query_name = False
         self.button_add.setEnabled(False)
         
     def press_subject_label_action(self, event):
-        self.edit_subject_label.clear()
-        #print(self.edit_name_label.text())
+        self.edit_label_subject.clear()
+        #print(self.edit_label_name.text())
         if not self.query_name : 
-            self.hint_label.setText("Please query a new name first")
+            self.label_hint.setText("Please query a new name first")
 
     def press_score_label_action(self, event):  
-        self.edit_score_label.clear()
+        self.edit_label_score.clear()
         if self.query_name : 
             self.button_add.setEnabled(True)
         else :
-            self.hint_label.setText("Please query a new name first")
+            self.label_hint.setText("Please query a new name first")
 
 
     def confirm_query(self) :
 
-        if(self.edit_name_label.text() == "") :  #"name"如果是空字串就要再輸入一次
-            self.hint_label.setText("Please enter name for student.")
+        if(self.edit_label_name.text() == "") :  #"name"如果是空字串就要再輸入一次
+            self.label_hint.setText("Please enter name for student.")
 
         else :
             
             self.button_query.setEnabled(False)
-            self.stu_list["name"] = self.edit_name_label.text()
+            self.stu_list["name"] = self.edit_label_name.text()
             self.stu_list["scores"] = {}
             print("self.stu_list : {}".format(self.stu_list))
             self.query_name = True
-            if(self.edit_subject_label.text() != "" and self.edit_score_label.text() != "") :
+            if(self.edit_label_subject.text() != "" and self.edit_label_score.text() != "") :
                 self.button_add.setEnabled(True)
             
             
@@ -153,42 +163,42 @@ class AddStuWidget(QtWidgets.QWidget):
         result = json.loads(result)
 
         if result["status"] == "OK" :
-            self.hint_label.setText("The student '{}' already exists in DB".format(self.edit_name_label.text()))
+            self.label_hint.setText("The student '{}' already exists in DB".format(self.edit_label_name.text()))
             self.query_name = False
 
         else :
-            self.hint_label.setText("Please enter subjects for student '{}'".format(self.edit_name_label.text()))
+            self.label_hint.setText("Please enter subjects for student '{}'".format(self.edit_label_name.text()))
         
 
     def confirm_add(self) :
-        #print(type(self.edit_subject_label.text()))
-        #print(type(self.edit_score_label.text()))
+        #print(type(self.edit_label_subject.text()))
+        #print(type(self.edit_label_score.text()))
         if(self.query_name == False) :  #先確認有沒有"query_name"
-            self.hint_label.setText("Please query a new name first")
+            self.label_hint.setText("Please query a new name first")
 
-        elif(self.edit_subject_label.text() == "") :  #要先輸入"subject"
-            self.hint_label.setText("Please input student's subject first.")
+        elif(self.edit_label_subject.text() == "") :  #要先輸入"subject"
+            self.label_hint.setText("Please input student's subject first.")
 
-        elif(self.edit_score_label.text() == "") :  #再輸入"score"
-            self.hint_label.setText("Please enter student's {} grade.".format(self.edit_subject_label.text()))
+        elif(self.edit_label_score.text() == "") :  #再輸入"score"
+            self.label_hint.setText("Please enter student's {} grade.".format(self.edit_label_subject.text()))
 
         else :
             print(self.stu_list)
-            self.stu_list["scores"][self.edit_subject_label.text()] = self.edit_score_label.text()
+            self.stu_list["scores"][self.edit_label_subject.text()] = self.edit_label_score.text()
             
-            self.hint_label.setText("Student {}'s subject '{}' with score '{}' added"
-            .format(self.edit_name_label.text(), self.edit_subject_label.text(), self.edit_score_label.text()))
+            self.label_hint.setText("Student {}'s subject '{}' with score '{}' added"
+            .format(self.edit_label_name.text(), self.edit_label_subject.text(), self.edit_label_score.text()))
             self.input_subject = True
         
 
     def confirm_send(self):
         if self.query_name and self.input_subject :
-            self.hint_label.setText(str(self.stu_list))
+            self.label_hint.setText(str(self.stu_list))
             self.input_name = False
             self.input_subject = False
-            self.edit_name_label.setText("Name")
-            self.edit_subject_label.setText("Subject")
-            self.edit_score_label.clear()
+            self.edit_label_name.setText("Name")
+            self.edit_label_subject.setText("Subject")
+            self.edit_label_score.clear()
             self.button_add.setEnabled(False)
 
 
@@ -198,19 +208,19 @@ class AddStuWidget(QtWidgets.QWidget):
             self.execute_send.return_sig.connect(self.send_action_result)  #將信號連接到指定槽函數
             
         else :
-            self.hint_label.setText("Please input correct information.")
+            self.label_hint.setText("Please input correct information.")
 
     def send_action_result(self, result):
         #"json.loads" : 將已編碼的JSON解碼為Python對象
         result = json.loads(result)
 
         if result["status"] == "OK" :
-            self.hint_label.setText("Add {} successfully".format(self.stu_list))
+            self.label_hint.setText("Add {} successfully".format(self.stu_list))
             self.stu_list = {}  #"self.stu_list"給reset掉
             print("self.stu_list : {}".format(self.stu_list))
 
         else :
-            self.hint_label.setText("Add {} unsuccessfully".format(self.stu_list))
+            self.label_hint.setText("Add {} unsuccessfully".format(self.stu_list))
         
 
             

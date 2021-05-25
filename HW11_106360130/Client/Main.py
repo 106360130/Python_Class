@@ -28,7 +28,7 @@ ServeiceController.socket_client = SocketClient()  #將"SocketClient()"存到"so
 app = QApplication([])
 main_window = MainWidget()
 
-main_window.setFixedSize(700, 400)  #設定視窗大小
+main_window.setFixedSize(700, 600)  #設定視窗大小
 main_window.show()
 # main_window.showFullScreen()
 
