@@ -1,0 +1,11 @@
+Hella buys Computer for $734
+Alice buys Computer for $548
+[VIP] Peter buys Computer for $666
+[VIP] Peter buys Book for $973
+Alice buys Paper for $545
+Alice buys Notebook for $501
+Bob buys Paper for $182
+[VIP] Sue buys Notebook for $396
+[VIP] Sue buys Notebook for $4
+Bob buys Book for $850
+Bob buys Book for $691
