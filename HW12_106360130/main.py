@@ -1,8 +1,10 @@
-import re
+from AnalyzeData import AnalyzeData
+
+
 
 hand = open('log.txt')
 
-
+#分析資料
 #初始化
 VIP = dict()
 member = dict()
@@ -14,42 +16,34 @@ for line in hand:
     line = line.rstrip()
     #print(line)
     #print(re.search('VIP', line))
-    if re.search('VIP', line) :
-        #print("VIP")
-
-        #print(line)
-        #print("re.search : {}".format(re.search('From:', line)))
-        #(?<=)  //前面的string
-        #(?=)  //後面的srting
-        #(?<=)()(?=)  //"抓取"在這兩個string之間的"character"
-        name = re.findall('(?<=\[VIP]\ )(.*?)(?=\ buys)', line)
-        item = re.findall('(?<=buys )(.*?)(?= for)', line)
-        price = re.findall('\$([0-9]+)', line)
-        
-        
-        # print("type(name)) : {}".format(type(name)))
-        # print("name : {}".format(name))
-        # print("price : {}".format(price))
+    result_find = AnalyzeData()
+    if result_find.if_data(line, "VIP") :
+  
+        #除了字母、數字，其餘特殊符號前面最好都加"\"，比較有統一性
+        name = AnalyzeData().catch_data_mid(line, "\[VIP] ", "\ buys")
+        item = AnalyzeData().catch_data_mid(line, "buys ", "\ for")
+        price = AnalyzeData().catch_data_back(line, "\$")
 
 
         # print("item : {}".format(item[0]))
         #print(coustomer["item"].has_key([str(item[0])])
 
-        if not name[0] in VIP :
+        if not name[0] in VIP :  #如果dict中沒有"name[0]"的key，就先創一個，初始化
             VIP[name[0]] = dict()
             
-        if str(item[0]) in VIP[name[0]] : 
+        if str(item[0]) in VIP[name[0]] :  #price會變動，如果此"item[0]"已經存在，price就疊加上去
             VIP[name[0]][str(item[0])] = VIP[name[0]][str(item[0])] + int(price[0])
 
-        else :
+        else :  #如果沒有就新增
             VIP[name[0]][str(item[0])] = int(price[0])
 
     else :
         #print("Member")
 
-        name = re.findall('(.*?)(?=\ buys)', line)
-        item = re.findall('(?<=buys )(.*?)(?= for)', line)
-        price = re.findall('\$([0-9]+)', line)
+        name = AnalyzeData().catch_data_front(line, "\ buys")
+        item = AnalyzeData().catch_data_mid(line, "buys ", "\ for")
+        price = AnalyzeData().catch_data_back(line, "\$")
+        
 
         if not name[0] in member :
             member[name[0]] = dict()
@@ -66,10 +60,12 @@ for line in hand:
     else :
         product[str(item[0])] = int(price[0])
 
-print(VIP)
-print(member)
-print(product)
+# print(VIP)
+# print(member)
+# print(product)
+#分析資料
 
+#列印分析結果
 print("===Analysis_result.txt===\n")
 
 print("[VIP]")
@@ -98,8 +94,10 @@ for person in member.keys() :
 print("")
 for item in product :
     print("Total {} sales: {}".format(item, product[item]))
+#列印分析結果
 
-
+#將分析結果寫入txt檔
+#可以先將要寫入的資料都"串接"起來，再寫進去txt檔
 f = open('data.txt', 'w')
 f.write("===Analysis_result.txt===")
 
@@ -131,3 +129,4 @@ for item in product :
     f.write("\nTotal {} sales: {}".format(item, product[item]))
 
 f.close()
+#將分析結果寫入txt檔
