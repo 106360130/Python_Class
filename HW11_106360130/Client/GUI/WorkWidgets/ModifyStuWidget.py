@@ -174,7 +174,7 @@ class ModifyWidget(QtWidgets.QWidget):
         layout.addWidget(self.screen_change, stretch=1)
         layout.addWidget(self.screen_add, stretch=1)
         layout.addWidget(self.screen_confirm, stretch=1)
-       
+        
 
         self.setLayout(layout)
     
